@@ -1,0 +1,77 @@
+version: "3.6"
+services:
+  telegraf:
+    image: "telegraf:${TELEGRAF_VERSION}"
+    container_name: "${TELEGRAF_CONTAINER_NAME}"
+    restart: always
+    volumes:
+    - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+    depends_on:
+      - influxdb
+    links:
+      - influxdb
+    ports:
+    - "${TELEGRAF_STATSD_PORT}:8125"
+
+  influxdb:
+    image: "influxdb:${INFLUXDB_VERSION}"
+    container_name: "${INFLUXDB_CONTAINER_NAME}"
+    restart: always
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: "${INFLUXDB_INIT_MODE}"
+      DOCKER_INFLUXDB_INIT_USERNAME: "${INFLUXDB_USERNAME}"
+      DOCKER_INFLUXDB_INIT_PASSWORD: "${INFLUXDB_PASSWORD}"
+      DOCKER_INFLUXDB_INIT_ORG: "${INFLUXDB_ORG}"
+      DOCKER_INFLUXDB_INIT_BUCKET: "${INFLUXDB_BUCKET}"
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "${INFLUXDB_ADMIN_TOKEN}"
+    ports:
+      - "${INFLUXDB_WEB_PORT}:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_data:/etc/influxdb2
+
+  grafana:
+    image: "grafana/grafana:${GRAFANA_VERSION}"
+    container_name: "${GRAFANA_CONTAINER_NAME}"
+    restart: always
+    depends_on:
+      - influxdb
+    environment:
+      GF_SECURITY_ADMIN_USER: "${GRAFANA_USERNAME}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_PASSWORD}"
+    links:
+      - influxdb
+    ports:
+      - "${GRAFANA_WEB_PORT}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana:/etc/grafana/provisioning
+
+  kong:
+    image: "kong:${KONG_VERSION}"
+    container_name: "${KONG_CONTAINER_NAME}"
+    restart: always
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/kong/declarative/kong.yml"
+      KONG_PROXY_ACCESS_LOG: "${KONG_LOG}"
+      KONG_ADMIN_ACCESS_LOG: "${KONG_LOG}"
+      KONG_PROXY_ERROR_LOG: "${KONG_LOG}"
+      KONG_ADMIN_ERROR_LOG: "${KONG_LOG}"
+      KONG_ADMIN_LISTEN: "0.0.0.0:${KONG_ADMIN_API_PORT}"
+      # KONG_ADMIN_GUI_URL: "https://localhost:${KONG_MANAGER_PORT}"
+    ports:
+      - "${KONG_CONSUMER_PORT}:8000"
+      - "${KONG_ADMIN_API_PORT}:8001"
+      # SSL
+      # - "${KONG_CONSUMER_PORT}:8443"
+      # - "${KONG_ADMIN_API_PORT}:8444"
+      # - "${KING_MANAGER_PORT}:8445"
+    volumes:
+      - ./kong:/kong/declarative
+
+volumes:
+  grafana_data: {}
+  influxdb_data: {}

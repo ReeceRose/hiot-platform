@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: Influxdb
+    type: influxdb
+    access: proxy
+    orgId: 1
+    url: http://influxdb:8086
+    isDefault: true
+    jsonData:
+      version: Flux
+      organization: hiot-platform
+      defaultBucket: data
+    secureJsonData:
+      token: hiot-platform-token
+    version: 1
+    editable: true
