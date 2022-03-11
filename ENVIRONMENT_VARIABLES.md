@@ -21,8 +21,8 @@ Environment variables used by HIoT Platform
 | GRAFANA_USERNAME        | Grafana username               | admin                  |
 | GRAFANA_PASSWORD        | Grafana password               | password               |
 | GRAFANA_WEB_PORT        | Grafana web port               | 9000                   |
-| KONG_VERSION            | Kong container version         | 2.7.1                  |
-| KONG_CONTAINER_NAME     | Kong docker container name     | hiot-platform-kong     |
-| KONG_LOG                | Kong log location              | /dev/stdout            |
-| KONG_CONSUMER_PORT      | Kong consumer port             | 8000                   |
-| KONG_ADMIN_API_PORT     | Kong API port                  | 8001                   |
+| TRAEFIK_VERSION         | Traefik container version      | 2.6                    |
+| TRAEFIK_CONTAINER_NAME  | Traefik container name         | hiot-platform-traefik  |
+| TRAEFIK_HTTP_PORT       | Traefik incoming HTTP port     | 80                     |
+| TRAEFIK_HTTPS_PORT      | Traefik incoming HTTPS port    | 443                    |
+| TRAEFIK_DASHBOARD_PORT  | Traefik dashboard port         | 8080                   |
