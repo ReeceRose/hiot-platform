@@ -1,4 +1,8 @@
+# Generic Dockerfile for all things Golang.
+# Check Makefile for how to run
+
 FROM --platform=amd64 golang:1.17.6-alpine3.15 AS builder
+# Note, need to specify amd64 as arm64 cannot fetch upx package
 ARG SERVICE
 
 WORKDIR /app
