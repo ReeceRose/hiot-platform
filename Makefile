@@ -5,7 +5,7 @@ CONTAINERS = $(addprefix $(SERVICES),_container)
 
 GO111MODULE ?= on
 CGO_ENABLED ?= 0
-GOARCH ?= amd64
+GOARCH ?= arm64
 PACKAGE ?= github.com/reecerose/hiot-platform
 VERSION ?= $(shell git describe --tags --always --abbrev=0 --match='v[0-9]*.[0-9]*.[0-9]*' 2> /dev/null | sed 's/^.//')
 COMMIT_HASH ?= $(shell git rev-parse --short HEAD)
