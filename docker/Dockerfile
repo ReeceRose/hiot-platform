@@ -15,4 +15,5 @@ RUN apk update \
 
 FROM scratch
 COPY --from=builder /service /
+EXPOSE 80
 ENTRYPOINT ["/service"]

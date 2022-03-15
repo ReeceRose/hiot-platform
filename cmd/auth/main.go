@@ -1,6 +1,12 @@
 package main
 
 import (
+	"context"
+
+	"github.com/reecerose/hiot-platform/auth/http"
+	zap_middleware "github.com/reecerose/hiot-platform/internal/logger"
+
+	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
 
@@ -19,6 +25,16 @@ func main() {
 		zap.String("commit-hash", CommitHash),
 		zap.String("build-timestamp", BuildTimestamp),
 	)
+
+	e := echo.New()
+	e.HideBanner = true
+	e.Use(zap_middleware.ZapLogger(zap.L()))
+	e.GET("/user/login", http.Login)
+	e.GET("/user/register", http.Register)
+	e.GET("/token/validate", http.Validate)
+	e.GET("/token/issue", http.IssueToken)
+	e.Logger.Fatal(e.Start(":80"))
+	defer e.Shutdown(context.Background())
 }
 
 func initLogger() (*zap.Logger, func()) {
