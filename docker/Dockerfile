@@ -10,10 +10,11 @@ COPY . .
 RUN apk update \
   && apk add make \
   && apk add upx \
+  && apk add git \
   && make $SERVICE \
   && mv build/$SERVICE /service
 
 FROM scratch
 COPY --from=builder /service /
-EXPOSE 80
+EXPOSE 443
 ENTRYPOINT ["/service"]

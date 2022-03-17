@@ -1,2 +1,4 @@
 build/
 vendor/
+certs/*.crt
+certs/*.key

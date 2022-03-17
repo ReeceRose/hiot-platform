@@ -49,16 +49,35 @@ services:
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./grafana:/etc/grafana/provisioning
 
-  traefik:
-    image: "traefik:${TRAEFIK_VERSION}"
-    container_name: "${TRAEFIK_CONTAINER_NAME}"
+  kong:
+    image: "kong:${KONG_VERSION}"
+    container_name: "${KONG_CONTAINER_NAME}"
     restart: always
-    volumes:
-      - ./traefik:/etc/traefik/
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/kong/declarative/kong.yml"
+      KONG_PROXY_ACCESS_LOG: "${KONG_LOG}"
+      KONG_ADMIN_ACCESS_LOG: "${KONG_LOG}"
+      KONG_PROXY_ERROR_LOG: "${KONG_LOG}"
+      KONG_ADMIN_ERROR_LOG: "${KONG_LOG}"
+      KONG_ADMIN_LISTEN: "0.0.0.0:${KONG_ADMIN_API_PORT} ssl"
     ports:
-      - "${TRAEFIK_HTTP_PORT}:80"
-      - "${TRAEFIK_HTTPS_PORT}:443"
-      - "${TRAEFIK_DASHBOARD_PORT}:8080"
+      - "${KONG_CONSUMER_PORT}:8443"
+      - "${KONG_ADMIN_API_PORT}:8444"
+    volumes:
+      - ./kong:/kong/declarative
+      - "${CERTS_DIR}:/certs"
+
+  auth:
+    image: "hiot-platform/auth:${AUTH_VERSION}"
+    container_name: "${AUTH_CONTAINER_NAME}"
+    restart: always
+    environment:
+      JWT_SECRET: "${AUTH_JWT_SECRET}"
+    ports:
+      - "${AUTH_HTTP_PORT}:443"
+    volumes:
+      - "${CERTS_DIR}:/certs"
 
 volumes:
   grafana_data: {}

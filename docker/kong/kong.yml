@@ -1,0 +1,14 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: auth
+    url: https://host.docker.internal:3000
+    routes:
+      - name: auth-route
+        paths:
+          - /auth
+        strip_path: true
+
+plugins:
+  - name: prometheus
